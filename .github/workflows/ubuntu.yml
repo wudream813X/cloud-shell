@@ -12,5 +12,7 @@ jobs:
           curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
           chmod +x cloudflared
           sudo mv cloudflared /usr/local/bin/
+      - name: Set explicit password
+        run: echo "runner:123456" | sudo chpasswd
       - name: Run cloudflared
         run: timeout 4h cloudflared tunnel --url ssh://localhost:22
