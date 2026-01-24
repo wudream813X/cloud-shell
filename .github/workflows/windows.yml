@@ -21,7 +21,7 @@ jobs:
           
       - name: Change Hostname (Spoofing)
         run: |
-          $NewName = "windows-cloud-shell"
+          $NewName = "dream-windows-shell"
           $env:COMPUTERNAME = $NewName
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName" -Name "ComputerName" -Value $NewName
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\ComputerName\ActiveComputerName" -Name "ComputerName" -Value $NewName
