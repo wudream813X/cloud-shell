@@ -1,0 +1,16 @@
+name: ubuntu cloud-shell
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup cloudflared
+        run: |
+          curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
+          chmod +x cloudflared
+          sudo mv cloudflared /usr/local/bin/
+      - name: Run cloudflared
+        run: timeout 4h cloudflared tunnel --url ssh://localhost:22
