@@ -27,7 +27,7 @@ jobs:
       - name: Create New User
         run: |
           net user dream dream /add /y
-          net localgroup administrators $NewUser /add
+          net localgroup administrators dream /add
       
       - name: Run cloudflared
         run: |
