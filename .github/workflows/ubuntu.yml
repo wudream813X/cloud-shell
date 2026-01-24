@@ -14,7 +14,7 @@ jobs:
           sudo mv cloudflared /usr/local/bin/
       - name: Change Hostname
         run: |
-          NEW_NAME="dream-cloud-shell"
+          NEW_NAME="dream-linux-shell"
           sudo hostnamectl set-hostname $NEW_NAME
           sudo sed -i "s/127.0.0.1.*/127.0.0.1 $NEW_NAME/" /etc/hosts
           
