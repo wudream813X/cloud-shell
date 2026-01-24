@@ -16,6 +16,12 @@ jobs:
         run: |
           sudo systemsetup -setremotelogin on
           sudo systemsetup -getremotelogin
+      - name: Change Hostname
+        run: |
+          NEW_NAME="macOS-cloud-shell"
+          sudo scutil --set HostName $NEW_NAME
+          sudo scutil --set ComputerName $NEW_NAME
+          sudo scutil --set LocalHostName $NEW_NAME
       
       - name: Create New User
         run: sudo sysadminctl -addUser dream -fullName dream -password dream -admin
