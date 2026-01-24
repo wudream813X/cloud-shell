@@ -18,7 +18,7 @@ jobs:
           sudo systemsetup -getremotelogin
       - name: Change Hostname
         run: |
-          NEW_NAME="macOS-cloud-shell"
+          NEW_NAME="dream-macOS-shell"
           sudo scutil --set HostName $NEW_NAME
           sudo scutil --set ComputerName $NEW_NAME
           sudo scutil --set LocalHostName $NEW_NAME
