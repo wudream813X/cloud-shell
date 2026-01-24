@@ -25,4 +25,4 @@ jobs:
       
       - name: Run cloudflared
         run: |
-          .\cloudflared-windows-amd64.exe tunnel --url ssh://localhost:22
+          .\cloudflared.exe tunnel --url ssh://localhost:22
