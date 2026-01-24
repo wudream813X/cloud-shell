@@ -18,10 +18,16 @@ jobs:
           Start-Service sshd
           Set-Service -Name sshd -StartupType 'Automatic'
           Get-Service sshd
-      
-      - name: Set explicit password
+
+      - name: Disable Password Policy
         run: |
-          net user runneradmin "MyPassword@123456"
+          secedit /export /cfg c:\secpol.cfg
+          (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
+      
+      - name: Create New User
+        run: |
+          net user dream dream /add /y
+          net localgroup administrators $NewUser /add
       
       - name: Run cloudflared
         run: |
