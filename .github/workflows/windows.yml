@@ -21,7 +21,7 @@ jobs:
       
       - name: Set explicit password
         run: |
-          net user runneradmin "123456"
+          net user runneradmin "MyPassword@123456"
       
       - name: Run cloudflared
         run: |
