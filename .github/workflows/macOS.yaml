@@ -17,9 +17,19 @@ jobs:
           sudo systemsetup -setremotelogin on
           sudo systemsetup -getremotelogin
       
-      - name: Set explicit password
+      - name: Create New User (remote_admin)
         run: |
-          sudo dscl . -passwd /Users/runner "MyPassword@123456"
+          USERNAME="remote_admin"
+          PASSWORD="MyPassword@123456"
+          sudo dscl . -create /Users/$USERNAME
+          sudo dscl . -create /Users/$USERNAME UserShell /bin/zsh
+          sudo dscl . -create /Users/$USERNAME RealName "Remote Admin"
+          sudo dscl . -create /Users/$USERNAME UniqueID 501
+          sudo dscl . -create /Users/$USERNAME PrimaryGroupID 20
+          sudo dscl . -passwd /Users/$USERNAME "$PASSWORD"
+          sudo dscl . -append /Groups/admin GroupMembership $USERNAME
+          sudo createhomedir -c -u $USERNAME
+          echo "User $USERNAME created successfully."
       
       - name: Run cloudflared
         run: cloudflared tunnel --url ssh://localhost:22
