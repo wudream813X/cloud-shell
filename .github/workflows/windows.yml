@@ -18,6 +18,12 @@ jobs:
           Start-Service sshd
           Set-Service -Name sshd -StartupType 'Automatic'
           Get-Service sshd
+
+      - name: Disable Password Policy
+        run: |
+          secedit /export /cfg c:\secpol.cfg
+          (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
+          secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
           
       - name: Change Hostname (Spoofing)
         run: |
@@ -27,12 +33,6 @@ jobs:
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\ComputerName\ActiveComputerName" -Name "ComputerName" -Value $NewName
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "Hostname" -Value $NewName
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "NV Hostname" -Value $NewName
-
-      - name: Disable Password Policy
-        run: |
-          secedit /export /cfg c:\secpol.cfg > $null
-          (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
-          secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY > $null
       
       - name: Create New User
         run: |
