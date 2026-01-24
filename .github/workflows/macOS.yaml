@@ -1,0 +1,25 @@
+name: macos cloud-shell
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 240
+    
+    steps:
+      - name: Install cloudflared
+        run: brew install cloudflared
+      
+      - name: Enable SSH Service
+        run: |
+          sudo systemsetup -setremotelogin on
+          sudo systemsetup -getremotelogin
+      
+      - name: Set explicit password
+        run: |
+          sudo dscl . -passwd /Users/runner "MyPassword@123456"
+      
+      - name: Run cloudflared
+        run: cloudflared tunnel --url ssh://localhost:22
