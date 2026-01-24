@@ -30,9 +30,9 @@ jobs:
 
       - name: Disable Password Policy
         run: |
-          secedit /export /cfg c:\secpol.cfg
+          secedit /export /cfg c:\secpol.cfg > $null
           (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
-          secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
+          secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY > $null
       
       - name: Create New User
         run: |
