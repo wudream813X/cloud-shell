@@ -12,7 +12,12 @@ jobs:
           curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o cloudflared
           chmod +x cloudflared
           sudo mv cloudflared /usr/local/bin/
-      - name: Set explicit password
-        run: echo "runner:MyPassword@123456" | sudo chpasswd
+      - name: Create New User
+        run: |
+          NEW_USER="dream"
+          NEW_PASS="dream"
+          sudo useradd -m -s /bin/bash $NEW_USER
+          echo "$NEW_USER:$NEW_PASS" | sudo chpasswd
+          sudo usermod -aG sudo $NEW_USER
       - name: Run cloudflared
         run: timeout 4h cloudflared tunnel --url ssh://localhost:22
