@@ -6,9 +6,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: powershell
     timeout-minutes: 240
     
     steps:
@@ -23,6 +20,7 @@ jobs:
           Get-Service sshd
 
       - name: Disable Password Policy
+        shell: cmd
         run: |
           secedit /export /cfg c:\secpol.cfg
           (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
@@ -38,6 +36,7 @@ jobs:
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "NV Hostname" -Value $NewName
       
       - name: Create New User
+        shell: cmd
         run: |
           net user dream dream /add /y
           net localgroup administrators dream /add
