@@ -39,5 +39,6 @@ jobs:
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "NV Hostname" -Value $NewName
       
       - name: Run cloudflared
+        shell: cmd
         run: |
           .\cloudflared.exe tunnel --url ssh://localhost:22
