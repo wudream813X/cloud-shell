@@ -20,7 +20,6 @@ jobs:
           Get-Service sshd
 
       - name: Disable Password Policy
-        shell: cmd
         run: |
           secedit /export /cfg c:\secpol.cfg
           (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
