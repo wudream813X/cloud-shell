@@ -24,6 +24,10 @@ jobs:
           secedit /export /cfg c:\secpol.cfg
           (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
           secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
+      - name: Create New User
+        run: |
+          net user dream dream /add /y
+          net localgroup administrators dream /add
           
       - name: Change Hostname (Spoofing)
         run: |
@@ -33,12 +37,6 @@ jobs:
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\ComputerName\ActiveComputerName" -Name "ComputerName" -Value $NewName
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "Hostname" -Value $NewName
           Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "NV Hostname" -Value $NewName
-      
-      - name: Create New User
-        shell: cmd
-        run: |
-          net user dream dream /add /y
-          net localgroup administrators dream /add
       
       - name: Run cloudflared
         run: |
