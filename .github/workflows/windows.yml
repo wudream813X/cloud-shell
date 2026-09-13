@@ -10,33 +10,44 @@ jobs:
     
     steps:
       - name: Setup cloudflared
+        shell: pwsh
         run: |
-          Invoke-WebRequest -Uri https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe -OutFile cloudflared.exe
+          Invoke-WebRequest `
+            -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" `
+            -OutFile "cloudflared.exe"
+      
+          .\cloudflared.exe --version
       
       - name: Setup SSH Server
+        shell: pwsh
         run: |
           Start-Service sshd
-          Set-Service -Name sshd -StartupType 'Automatic'
+          Set-Service -Name sshd -StartupType Automatic
           Get-Service sshd
-
+      
       - name: Disable Password Policy
         run: |
           secedit /export /cfg c:\secpol.cfg
           (Get-Content c:\secpol.cfg) -replace "PasswordComplexity = 1", "PasswordComplexity = 0" -replace "MinimumPasswordLength = \d+", "MinimumPasswordLength = 0" | Set-Content c:\secpol.cfg
           secedit /configure /db c:\windows\security\local.sdb /cfg c:\secpol.cfg /areas SECURITYPOLICY
+        
       - name: Create New User
+        shell: pwsh
         run: |
-          net user dream dream /add /y
+          net user dream dream /add
           net localgroup administrators dream /add
-          
-      - name: Change Hostname (Spoofing)
+      
+      - name: Test Network
+        shell: pwsh
         run: |
-          $NewName = "dream-windows-shell"
-          $env:COMPUTERNAME = $NewName
-          Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\ComputerName\ComputerName" -Name "ComputerName" -Value $NewName
-          Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\ComputerName\ActiveComputerName" -Name "ComputerName" -Value $NewName
-          Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "Hostname" -Value $NewName
-          Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters" -Name "NV Hostname" -Value $NewName
+          Write-Host "=== DNS ==="
+          Resolve-DnsName api.trycloudflare.com
+      
+          Write-Host "=== DNS 1.1.1.1 ==="
+          Resolve-DnsName api.trycloudflare.com -Server 1.1.1.1
+      
+          Write-Host "=== TCP ==="
+          Test-NetConnection api.trycloudflare.com -Port 443
       
       - name: Run cloudflared
         shell: cmd
